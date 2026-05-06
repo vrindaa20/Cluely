@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cluely — Detective Agency</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ===================== CSS VARIABLES ===================== */
+        :root {
+            --transition: 0.4s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #060e0a;
+            --bg-secondary: #0a1510;
+            --bg-card: rgba(176, 228, 204, 0.04);
+            --bg-card-solid: #111a16;
+            --bg-stats: #B0E4CC;
+            --text-primary: #B0E4CC;
+            --text-secondary: rgba(176, 228, 204, 0.7);
+            --text-stats: #060e0a;
+            --accent: #408A71;
+            --accent-light: #B0E4CC;
+            --navbar-bg: rgba(6, 14, 10, 0.97);
+            --border: rgba(64, 138, 113, 0.25);
+            --input-bg: #1a2820;
+            --input-text: #B0E4CC;
+            --footer-bg: linear-gradient(135deg, #000000, #111, #000000);
+            --card-hover-shadow: rgba(64, 138, 113, 0.35);
+            --overlay: rgba(0, 0, 0, 0.65);
+            --toggle-bg: #408A71;
+            --toggle-knob: #B0E4CC;
+            --modal-bg: #162318;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f0faf5;
+            --bg-secondary: #e4f5ee;
+            --bg-card: rgba(64, 138, 113, 0.07);
+            --bg-card-solid: #ddf0e8;
+            --bg-stats: #408A71;
+            --text-primary: #0d2e20;
+            --text-secondary: rgba(13, 46, 32, 0.7);
+            --text-stats: #f0faf5;
+            --accent: #2d7a5e;
+            --accent-light: #408A71;
+            --navbar-bg: rgba(240, 250, 245, 0.97);
+            --border: rgba(64, 138, 113, 0.3);
+            --input-bg: #ffffff;
+            --input-text: #0d2e20;
+            --footer-bg: linear-gradient(135deg, #0d2e20, #1a4d38, #0d2e20);
+            --card-hover-shadow: rgba(64, 138, 113, 0.3);
+            --overlay: rgba(0, 0, 0, 0.55);
+            --toggle-bg: #B0E4CC;
+            --toggle-knob: #408A71;
+            --modal-bg: #d4ede3;
+        }
+
+        /* ===================== RESET ===================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+        }
+
+        /* ===================== NAVBAR ===================== */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 48px;
+            background: var(--navbar-bg);
+            position: sticky;
+            top: 0;
+            z-index: 9999;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            transition: background var(--transition), border-color var(--transition);
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: var(--accent);
+            transition: color var(--transition);
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 28px;
+            align-items: center;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: var(--accent);
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.2s;
+        }
+
+        .nav-links li a:hover {
+            color: var(--accent-light);
+        }
+
+        /* ===================== THEME TOGGLE ===================== */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .toggle-label {
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color var(--transition);
+            user-select: none;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 52px;
+            height: 26px;
+            background: var(--toggle-bg);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background var(--transition);
+            border: 1px solid var(--border);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            background: var(--toggle-knob);
+            border-radius: 50%;
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background var(--transition);
+        }
+
+        [data-theme="light"] .toggle-switch::after {
+            transform: translateX(26px);
+        }
+
+        .toggle-icon {
+            font-size: 15px;
+        }
+
+        /* ===================== HERO SLIDER ===================== */
+        .hero-slider {
+            position: relative;
+            height: 62vh;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--overlay);
+            transition: background var(--transition);
+        }
+
+        .content {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            transform: translateY(-50%);
+            color: var(--accent-light);
+            z-index: 2;
+        }
+
+        .content h2 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            opacity: 0.85;
+        }
+
+        .content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 52px;
+            font-weight: 900;
+            color: var(--accent);
+            line-height: 1.1;
+            margin-bottom: 12px;
+        }
+
+        .content p {
+            font-size: 18px;
+            margin-bottom: 22px;
+            opacity: 0.85;
+        }
+
+        .btn-primary {
+            padding: 11px 28px;
+            background: var(--accent);
+            border: none;
+            color: var(--bg-primary);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 3px;
+            text-transform: uppercase;
+            transition: background 0.2s, color 0.2s, transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-light);
+            color: var(--bg-primary);
+            transform: translateY(-2px);
+        }
+
+        /* DOTS */
+        .dots {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            z-index: 3;
+        }
+
+        .dots span {
+            height: 8px;
+            width: 8px;
+            background: rgba(176, 228, 204, 0.35);
+            display: inline-block;
+            border-radius: 50%;
+            margin: 4px;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .dots span.active {
+            background: var(--accent);
+            transform: scale(1.3);
+        }
+
+        /* ===================== STATS ===================== */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            text-align: center;
+            padding: 36px 40px;
+            background: var(--bg-stats);
+            transition: background var(--transition);
+        }
+
+        .stats .stat-item {
+            padding: 10px;
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .stats .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stats h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--text-stats);
+            transition: color var(--transition);
+        }
+
+        .stats p {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-stats);
+            opacity: 0.75;
+            letter-spacing: 0.5px;
+            transition: color var(--transition);
+        }
+
+        /* ===================== SERVICES / CASES ===================== */
+        .services-section {
+            background: var(--bg-secondary);
+            padding: 70px 50px;
+            transition: background var(--transition);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            transition: color var(--transition);
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            margin-top: 8px;
+            font-size: 15px;
+            transition: color var(--transition);
+        }
+
+        .services {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .services a {
+            text-decoration: none;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s, background var(--transition), border-color var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px var(--card-hover-shadow);
+        }
+
+        .card h3 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 8px;
+            color: var(--accent);
+            font-size: 16px;
+            transition: color var(--transition);
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            transition: color var(--transition);
+        }
+
+        /* ===================== TEAM ===================== */
+        .detectives {
+            padding: 70px 20px;
+            background: var(--bg-primary);
+            transition: background var(--transition);
+        }
+
+        .cards {
+            display: flex;
+            gap: 28px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .agent-card {
+            background: var(--accent);
+            padding: 28px 24px;
+            border-radius: 16px;
+            width: 240px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: transform 0.4s, background 0.4s, box-shadow 0.3s, border-color var(--transition);
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-10px) scale(1.04);
+            background: var(--bg-secondary);
+            box-shadow: 0 0 28px var(--card-hover-shadow);
+        }
+
+        .agent-card:hover .avatar {
+            box-shadow: 0 0 22px var(--accent);
+        }
+
+        .avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 0 auto 14px;
+            background: var(--accent-light);
+            box-shadow: 0 0 18px rgba(176, 228, 204, 0.4);
+            transition: box-shadow 0.3s, background var(--transition), color var(--transition);
+        }
+
+        .agent-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 17px;
+            color: var(--accent-light);
+            margin-bottom: 6px;
+            transition: color var(--transition);
+        }
+
+        .agent-card p {
+            font-size: 12px;
+            color: rgba(176, 228, 204, 0.75);
+            letter-spacing: 0.5px;
+        }
+
+        /* MODAL */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.82);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s;
+            z-index: 10000;
+        }
+
+        .modal:target {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--modal-bg);
+            padding: 36px;
+            border-radius: 16px;
+            width: 360px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(64, 138, 113, 0.5);
+            border: 1px solid var(--border);
+            transition: background var(--transition), border-color var(--transition);
+        }
+
+        .modal-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--accent);
+            margin-bottom: 14px;
+            transition: color var(--transition);
+        }
+
+        .modal-content p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            transition: color var(--transition);
+        }
+
+        .close {
+            display: inline-block;
+            margin-top: 22px;
+            padding: 10px 20px;
+            background: var(--accent);
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .close:hover {
+            background: var(--accent-light);
+            color: #0d2e20;
+        }
+
+        /* ===================== ABOUT ===================== */
+        .about-section {
+            padding: 80px 20px;
+            background: var(--bg-card-solid);
+            transition: background var(--transition);
+        }
+
+        .about-container {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 22px;
+            color: var(--accent-light);
+            transition: color var(--transition);
+        }
+
+        .about-text p {
+            margin-bottom: 16px;
+            line-height: 1.75;
+            color: var(--text-secondary);
+            font-size: 15px;
+            transition: color var(--transition);
+        }
+
+        .about-cards {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .about-card {
+            background: var(--bg-card);
+            padding: 22px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            transition: transform 0.3s, box-shadow 0.3s, background var(--transition), border-color var(--transition);
+        }
+
+        .about-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 18px var(--card-hover-shadow);
+        }
+
+        .about-card h2 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 8px;
+            color: var(--accent-light);
+            font-size: 18px;
+            transition: color var(--transition);
+        }
+
+        .about-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            transition: color var(--transition);
+        }
+
+        @media(max-width:900px) {
+            .about-container {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* ===================== CONTACT ===================== */
+        .contact-section {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 70px 20px;
+            background: var(--bg-secondary);
+            transition: background var(--transition);
+        }
+
+        .contact-container {
+            display: flex;
+            gap: 60px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .contact-text {
+            flex: 1;
+        }
+
+        .contact-text h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.6rem;
+            margin-bottom: 18px;
+            color: var(--accent-light);
+            line-height: 1.2;
+            transition: color var(--transition);
+        }
+
+        .contact-text h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--text-secondary);
+            transition: color var(--transition);
+        }
+
+        .contact-form {
+            flex: 1;
+            background: var(--bg-card);
+            padding: 36px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            transition: background var(--transition), border-color var(--transition);
+        }
+
+        .contact-form h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            transition: color var(--transition);
+        }
+
+        .contact-form>p {
+            margin-bottom: 22px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            transition: color var(--transition);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        form input,
+        form textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            outline: none;
+            font-size: 14px;
+            background: var(--input-bg);
+            color: var(--input-text);
+            border-radius: 7px;
+            transition: box-shadow 0.3s, background var(--transition), color var(--transition), border-color var(--transition);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        form input::placeholder,
+        form textarea::placeholder {
+            color: var(--text-secondary);
+        }
+
+        form input:focus,
+        form textarea:focus {
+            box-shadow: 0 0 0 2px var(--accent);
+            border-color: var(--accent);
+        }
+
+        form textarea {
+            height: 120px;
+            resize: none;
+        }
+
+        form button {
+            width: 160px;
+            padding: 13px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 7px;
+            background: var(--accent);
+            color: white;
+            letter-spacing: 0.5px;
+            transition: background 0.2s, transform 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        form button:hover {
+            background: var(--accent-light);
+            color: var(--bg-primary);
+            transform: scale(1.04);
+        }
+
+        @media(max-width:900px) {
+            .contact-container {
+                flex-direction: column;
+            }
+        }
+
+        /* ===================== NEWS ===================== */
+        .news-header {
+            text-align: center;
+            padding: 60px 20px 20px;
+            background: var(--bg-primary);
+            transition: background var(--transition);
+        }
+
+        .news-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            color: var(--accent-light);
+            transition: color var(--transition);
+        }
+
+        .news-header p {
+            margin-top: 10px;
+            color: var(--text-secondary);
+            transition: color var(--transition);
+        }
+
+        .news-section {
+            padding: 40px 20px 80px;
+            background: var(--bg-primary);
+            transition: background var(--transition);
+        }
+
+        .news-container {
+            max-width: 1200px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .news-card {
+            background: var(--bg-card);
+            padding: 26px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: transform 0.3s, box-shadow 0.3s, background var(--transition), border-color var(--transition);
+        }
+
+        .news-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 0 22px var(--card-hover-shadow);
+        }
+
+        .tag {
+            font-size: 11px;
+            background: var(--accent);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: background var(--transition);
+        }
+
+        .news-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            transition: color var(--transition);
+        }
+
+        .news-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+            line-height: 1.55;
+            transition: color var(--transition);
+        }
+
+        .date {
+            font-size: 11px;
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .read-more {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 7px 14px;
+            background: var(--accent);
+            color: white;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .read-more:hover {
+            background: var(--accent-light);
+            color: #0d2e20;
+        }
+
+        /* ===================== FOOTER ===================== */
+        .footer {
+            background: var(--footer-bg);
+            color: var(--accent-light);
+            padding: 60px 48px;
+            position: relative;
+            transition: background var(--transition);
+        }
+
+        .footer-text {
+            font-size: 15px;
+            margin-bottom: 6px;
+            color: var(--accent-light);
+            opacity: 0.75;
+        }
+
+        .footer-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 38px;
+            color: var(--accent);
+            font-weight: 900;
+            margin-bottom: 24px;
+            letter-spacing: 2px;
+        }
+
+        .footer hr {
+            border: none;
+            border-top: 1px solid rgba(176, 228, 204, 0.15);
+            margin: 20px 0;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 22px;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-light);
+        }
+
+        .footer-copy {
+            margin-top: 22px;
+            font-size: 12px;
+            color: var(--accent-light);
+            opacity: 0.5;
+        }
+
+        .enquire-btn {
+            position: absolute;
+            right: 48px;
+            top: 72px;
+            background: var(--accent);
+            color: white;
+            padding: 12px 22px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .enquire-btn:hover {
+            background: var(--accent-light);
+            color: #0d2e20;
+            transform: translateY(-2px);
+        }
+
+        .scroll-top {
+            position: absolute;
+            right: 48px;
+            bottom: 40px;
+            background: var(--accent);
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .scroll-top:hover {
+            background: var(--accent-light);
+            color: #0d2e20;
+            transform: translateY(-3px);
+        }
+
+        /* ===================== RESPONSIVE ===================== */
+        @media(max-width:900px) {
+            .stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .services {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media(max-width:600px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .services {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 14px 20px;
+            }
+
+            .nav-links {
+                gap: 14px;
+            }
+
+            .content h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ======================== NAVBAR ======================== -->
+    <nav class="navbar">
+        <div class="logo">Cluely</div>
+
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Cases</a></li>
+            <li><a href="#">Our Team</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">News & Events</a></li>
+        </ul>
+
+        <div class="theme-toggle" onclick="toggleTheme()">
+            <span class="toggle-icon" id="themeIcon">🌙</span>
+            <div class="toggle-switch"></div>
+            <span class="toggle-label" id="themeLabel">DARK</span>
+        </div>
+    </nav>
+
+    <!-- ======================== HERO SLIDER ======================== -->
+    <div class="hero-slider">
+
+        <div class="slide active"
+            style="background-image:url('https://images.unsplash.com/photo-1605806616949-1e87b487fc2f');">
+            <div class="content">
+                <h2>Beyond Borders, Beyond Doubt</h2>
+                <h1>Cluely</h1>
+                <p>Pioneering Total Security Solutions</p>
+                <button class="btn-primary">Discover More</button>
+            </div>
+        </div>
+
+        <div class="slide"
+            style="background-image:url('https://images.unsplash.com/photo-1508385082359-f38ae991e8f2');">
+            <div class="content">
+                <h2>Tracking Every Move</h2>
+                <h1>Advanced Surveillance</h1>
+                <p>Precision Intelligence Control</p>
+                <button class="btn-primary">Discover More</button>
+            </div>
+        </div>
+
+        <div class="slide"
+            style="background-image:url('https://images.pexels.com/photos/8382254/pexels-photo-8382254.jpeg');">
+            <div class="content">
+                <h2>Confidential Operations</h2>
+                <h1>Elite Investigation Unit</h1>
+                <p>Where Secrets Meet Truth</p>
+                <button class="btn-primary">Discover More</button>
+            </div>
+        </div>
+
+        <div class="slide"
+            style="background-image:url('https://images.unsplash.com/photo-1485827404703-89b55fcc595e');">
+            <div class="content">
+                <h2>Digital Forensics</h2>
+                <h1>Cyber Crime Division</h1>
+                <p>Tracking Every Digital Footprint</p>
+                <button class="btn-primary">Discover More</button>
+            </div>
+        </div>
+
+        <div class="dots">
+            <span class="active"></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <!-- ======================== STATS ======================== -->
+    <div class="stats">
+        <div class="stat-item">
+            <p>Employees</p>
+            <h1>3.5K+</h1>
+        </div>
+        <div class="stat-item">
+            <p>Affiliations</p>
+            <h1>12+</h1>
+        </div>
+        <div class="stat-item">
+            <p>Years in Business</p>
+            <h1>60+</h1>
+        </div>
+        <div class="stat-item">
+            <p>Offices in India</p>
+            <h1>18</h1>
+        </div>
+        <div class="stat-item">
+            <p>Countries Covered</p>
+            <h1>60+</h1>
+        </div>
+        <div class="stat-item">
+            <p>Cases</p>
+            <h1>20K+</h1>
+        </div>
+    </div>
+
+    <!-- ======================== CASES ======================== -->
+    <section class="services-section">
+        <div class="section-header">
+            <h2>Our Cases</h2>
+            <p>Browse through our most notable investigations</p>
+        </div>
+        <div class="services">
+            <a href="111audio.html">
+                <div class="card">
+                    <h3>#Case101</h3>
+                    <p>The Last Supper</p>
+                </div>
+            </a>
+            <a href="222audio.html">
+                <div class="card">
+                    <h3>#Case102</h3>
+                    <p>Ghost Signal</p>
+                </div>
+            </a>
+            <a href="333audio.html">
+                <div class="card">
+                    <h3>#Case103</h3>
+                    <p>The Quiet House</p>
+                </div>
+            </a>
+            <a href="444audio.html">
+                <div class="card">
+                    <h3>#Case104</h3>
+                    <p>The Vanishing Bride</p>
+                </div>
+            </a>
+            <a href="555audio.html">
+                <div class="card">
+                    <h3>#Case105</h3>
+                    <p>The Empty Vault</p>
+                </div>
+            </a>
+            <a href="666audio.html">
+                <div class="card">
+                    <h3>#Case106</h3>
+                    <p>The Borrowed Child</p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- ======================== TEAM ======================== -->
+    <section class="detectives">
+        <div class="section-header">
+            <h2>Our Team</h2>
+            <p>The minds behind every solved case</p>
+        </div>
+        <div class="cards">
+
+            <a href="#vrinda" class="agent-card">
+                <div class="avatar">VS</div>
+                <h3>Vrinda Sharma</h3>
+                <p>Cyber Crime Expert</p>
+            </a>
+
+            <a href="#shreem" class="agent-card">
+                <div class="avatar">SS</div>
+                <h3>Shreem Singla</h3>
+                <p>Mastermind Detective</p>
+            </a>
+
+            <a href="#archana" class="agent-card">
+                <div class="avatar">AB</div>
+                <h3>Archana Banwala</h3>
+                <p>Undercover Specialist</p>
+            </a>
+
+        </div>
+    </section>
+
+    <!-- MODALS -->
+    <div id="vrinda" class="modal">
+        <div class="modal-content">
+            <h3>Vrinda Sharma</h3>
+            <p>Vrinda is the tech genius of the team. She tracks digital footprints and uncovers hidden online evidence
+                that others miss.</p>
+            <a href="#" class="close">Close</a>
+        </div>
+    </div>
+
+    <div id="shreem" class="modal">
+        <div class="modal-content">
+            <h3>Shreem Singla</h3>
+            <p>Shreem is the mastermind behind the agency. With sharp observation skills and deep understanding of
+                criminal behavior.</p>
+            <a href="#" class="close">Close</a>
+        </div>
+    </div>
+
+    <div id="archana" class="modal">
+        <div class="modal-content">
+            <h3>Archana Banwala</h3>
+            <p>Archana is fearless and always ready for field action. From stakeouts to undercover missions.</p>
+            <a href="#" class="close">Close</a>
+        </div>
+    </div>
+
+    <!-- ======================== ABOUT ======================== -->
+    <section class="about-section">
+        <div class="about-container">
+            <div class="about-text">
+                <h1>About Us</h1>
+                <p>At Cluely, we are committed to uncovering the truth with unmatched precision, integrity, and
+                    discretion. Our team of skilled investigators combines cutting-edge technology with years of field
+                    expertise to handle even the most complex and sensitive cases.</p>
+                <p>From cybercrime analysis and surveillance operations to personal and corporate investigations, we
+                    approach every case with strategic thinking, attention to detail, and complete confidentiality.</p>
+                <p>We understand that every case carries importance and urgency. That's why we work relentlessly to
+                    deliver accurate insights and reliable evidence you can trust.</p>
+                <p>At Cluely we don't just follow clues — we uncover the truth.</p>
+            </div>
+            <div class="about-cards">
+                <div class="about-card">
+                    <h2>Mission</h2>
+                    <p>Deliver truth with accuracy and protect our clients at all costs.</p>
+                </div>
+                <div class="about-card">
+                    <h2>Vision</h2>
+                    <p>To be the most trusted investigative agency.</p>
+                </div>
+                <div class="about-card">
+                    <h2>Expertise</h2>
+                    <p>Cybercrime, surveillance, fraud detection & intelligence.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== CONTACT ======================== -->
+    <section class="contact-section">
+        <div class="contact-container">
+            <div class="contact-text">
+                <h1>Discover. Resolve. Protect.</h1>
+                <h2>Your Journey to Truth Starts Here</h2>
+            </div>
+            <div class="contact-form">
+                <h3>Need Assistance?</h3>
+                <p>Fill the form and our investigative team will contact you.</p>
+                <form>
+                    <input type="text" placeholder="Name" required>
+                    <input type="email" placeholder="Email" required>
+                    <input type="text" placeholder="Phone">
+                    <input type="text" placeholder="State">
+                    <textarea placeholder="Message"></textarea>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== NEWS & EVENTS ======================== -->
+    <div class="news-header">
+        <h1>News & Events</h1>
+        <p>Stay updated with our latest investigations and activities</p>
+    </div>
+
+    <section class="news-section">
+        <div class="news-container">
+            <div class="news-card">
+                <span class="tag">Investigation</span>
+                <h2>High-Profile Cyber Fraud Case Solved</h2>
+                <p>Our team uncovered a complex cyber fraud network operating across multiple countries.</p>
+                <span class="date">March 2026</span><br>
+                <a href="#" class="read-more">Read More</a>
+            </div>
+            <div class="news-card">
+                <span class="tag">Event</span>
+                <h2>Security Awareness Seminar Conducted</h2>
+                <p>We hosted a seminar educating businesses on cybersecurity threats and prevention.</p>
+                <span class="date">February 2026</span><br>
+                <a href="#" class="read-more">Read More</a>
+            </div>
+            <div class="news-card">
+                <span class="tag">Update</span>
+                <h2>Advanced Surveillance Tech Introduced</h2>
+                <p>New surveillance tools have been deployed to enhance real-time tracking.</p>
+                <span class="date">January 2026</span><br>
+                <a href="#" class="read-more">Read More</a>
+            </div>
+            <div class="news-card">
+                <span class="tag">Case File</span>
+                <h2>The Midnight Archivist Case Reopened</h2>
+                <p>A mysterious cold case has been reopened with new forensic evidence.</p>
+                <span class="date">December 2025</span><br>
+                <a href="#" class="read-more">Read More</a>
+            </div>
+            <div class="news-card">
+                <span class="tag">Breaking</span>
+                <h2>Missing Executive Located Safely</h2>
+                <p>After weeks of investigation, the missing executive has been found unharmed.</p>
+                <span class="date">November 2025</span><br>
+                <a href="#" class="read-more">Read More</a>
+            </div>
+            <div class="news-card">
+                <span class="tag">Update</span>
+                <h2>AI-Based Tracking System Launched</h2>
+                <p>Our agency now uses AI-driven analytics for faster and more accurate investigations.</p>
+                <span class="date">October 2025</span><br>
+                <a href="#" class="read-more">Read More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== FOOTER ======================== -->
+    <footer class="footer">
+        <div class="footer-text">Discover the power of information with</div>
+        <div class="footer-title">Cluely</div>
+        <hr>
+        <div class="footer-links">
+            <a href="#">Home</a>
+            <a href="#">Cases</a>
+            <a href="#">Our Team</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+            <a href="#">News & Events</a>
+        </div>
+        <div class="footer-copy">
+            Copyright © 2018–2026 Cluely Private Detectives. All Rights Reserved. Licensed and Bonded.
+        </div>
+        <button class="enquire-btn">Enquire Now</button>
+        <div class="scroll-top" onclick="scrollToTop()">↑</div>
+    </footer>
+
+    <!-- ======================== JAVASCRIPT ======================== -->
+    <script>
+        /* ---------- SLIDER ---------- */
+        let slides = document.querySelectorAll(".slide");
+        let dots = document.querySelectorAll(".dots span");
+        let slideIndex = 0;
+
+        function changeSlide() {
+            slides.forEach(s => s.classList.remove("active"));
+            dots.forEach(d => d.classList.remove("active"));
+            slides[slideIndex].classList.add("active");
+            dots[slideIndex].classList.add("active");
+            slideIndex = (slideIndex + 1) % slides.length;
+        }
+
+        setInterval(changeSlide, 3000);
+
+        /* ---------- DARK / LIGHT TOGGLE ---------- */
+        const html = document.documentElement;
+        const themeIcon = document.getElementById('themeIcon');
+        const themeLabel = document.getElementById('themeLabel');
+
+        // Load saved theme from localStorage
+        const savedTheme = localStorage.getItem('cluelyTheme') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+        updateToggleUI(savedTheme);
+
+        function toggleTheme() {
+            const current = html.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('cluelyTheme', next);
+            updateToggleUI(next);
+        }
+
+        function updateToggleUI(theme) {
+            if (theme === 'light') {
+                themeIcon.textContent = '☀️';
+                themeLabel.textContent = 'LIGHT';
+            } else {
+                themeIcon.textContent = '🌙';
+                themeLabel.textContent = 'DARK';
+            }
+        }
+
+        /* ---------- SCROLL TO TOP ---------- */
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    </script>
+
+</body>
+
+</html>
