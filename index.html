@@ -10,7 +10,7 @@
         rel="stylesheet">
 
     <style>
-        
+        /* ===================== CSS VARIABLES ===================== */
         :root {
             --transition: 0.4s ease;
         }
@@ -712,6 +712,29 @@
             }
         }
 
+        /* ---- SUCCESS MESSAGE ---- */
+        .success-msg {
+            display: none;
+            background: rgba(64, 138, 113, 0.18);
+            border: 1px solid var(--accent);
+            color: var(--accent-light);
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 4px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .success-msg.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
         /* ===================== NEWS ===================== */
         .news-header {
             text-align: center;
@@ -1194,7 +1217,7 @@
             <div class="contact-form">
                 <h3>Need Assistance?</h3>
                 <p>Fill the form and our investigative team will contact you.</p>
-                <form>
+                <form id="contactForm">
                     <input type="text" placeholder="Name" required>
                     <input type="email" placeholder="Email" required>
                     <input type="text" placeholder="Phone">
@@ -1202,6 +1225,16 @@
                     <textarea placeholder="Message"></textarea>
                     <button type="submit">Submit</button>
                 </form>
+                <!-- Success message shown after submission -->
+                <div class="success-msg" id="successMsg">
+                    <div style="margin-top:24px;">
+    <button onclick="toggleSubmissions()" style="background:var(--accent);color:white;border:none;padding:10px 18px;border-radius:7px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;">
+        View Submissions
+    </button>
+    <div id="submissionsBox" style="display:none;margin-top:16px;max-height:260px;overflow-y:auto;"></div>
+</div>
+                    ✅ Thank you! Our team will reach out to you shortly.
+                </div>
             </div>
         </div>
     </section>
@@ -1295,6 +1328,79 @@
         }
 
         setInterval(changeSlide, 3000);
+
+        /* ---------- CONTACT FORM SUBMIT ---------- */
+       /*const contactForm = document.getElementById('contactForm');
+        const successMsg = document.getElementById('successMsg');
+
+        contactForm.addEventListener('submit', function(event) {
+            // Prevent page reload
+            event.preventDefault();
+
+            // Clear all fields
+            contactForm.reset();
+
+            // Show success message
+            successMsg.classList.add('show');
+
+            // Hide success message after 4 seconds -->
+            <!-- setTimeout(() => { -->
+                successMsg.classList.remove('show');
+            }, 4000);
+            /* ---------- CONTACT FORM SUBMIT ---------- */
+const contactForm = document.getElementById('contactForm');
+const successMsg = document.getElementById('successMsg');
+
+contactForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    // Collect form data
+    const inputs = contactForm.querySelectorAll('input, textarea');
+    const entry = {
+        name:    inputs[0].value,
+        email:   inputs[1].value,
+        phone:   inputs[2].value,
+        state:   inputs[3].value,
+        message: inputs[4].value,
+        time:    new Date().toLocaleString()
+    };
+
+    // Save to localStorage
+    const existing = JSON.parse(localStorage.getItem('cluelySubmissions') || '[]');
+    existing.push(entry);
+    localStorage.setItem('cluelySubmissions', JSON.stringify(existing));
+
+    // Clear form and show success
+    contactForm.reset();
+    successMsg.classList.add('show');
+    setTimeout(() => successMsg.classList.remove('show'), 4000);
+});
+/* ---------- VIEW SUBMISSIONS ---------- */
+function toggleSubmissions() {
+    const box = document.getElementById('submissionsBox');
+    const data = JSON.parse(localStorage.getItem('cluelySubmissions') || '[]');
+
+    if (box.style.display === 'block') {
+        box.style.display = 'none';
+        return;
+    }
+
+    if (data.length === 0) {
+        box.innerHTML = '<p style="color:var(--text-secondary);font-size:13px;">No submissions yet.</p>';
+    } else {
+        box.innerHTML = data.reverse().map((e, i) => `
+            <div style="background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px;font-size:13px;color:var(--text-primary);">
+                <strong>${e.name}</strong> &nbsp;|&nbsp; ${e.email} &nbsp;|&nbsp; ${e.phone || '—'} &nbsp;|&nbsp; ${e.state || '—'}<br>
+                <span style="color:var(--text-secondary)">${e.message}</span><br>
+                <small style="opacity:0.5">${e.time}</small>
+            </div>
+        `).join('');
+    }
+
+    box.style.display = 'block';
+}
+
+        
 
         /* ---------- DARK / LIGHT TOGGLE ---------- */
         const html = document.documentElement;
